@@ -81,3 +81,25 @@ if __name__ == '__main__':
     fptr.write(str(result) + '\n')
 
     fptr.close()
+
+#
+# Input
+# 5
+# 2 3
+# -----
+# -----
+# p--m-
+# -----
+# -----
+#
+
+def nextMove(n,r,c,grid):
+    return ""
+
+n = int(input())
+r,c = [int(i) for i in input().strip().split()]
+grid = []
+for i in range(0, n):
+    grid.append(input())
+
+print(nextMove(n,r,c,grid))
