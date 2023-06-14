@@ -182,3 +182,64 @@ if __name__ == '__main__':
     fptr.write(str(total) + '\n')
 
     fptr.close()
+
+# -------------------------------------------------------------------------------------------------------------------
+# 5. Queens attack 2
+#!/bin/python3
+
+n, k = map(int, input().split())
+rQueen, cQueen = map(int, input().split())
+obstacles = set()
+for _ in range(k):
+    rObs, cObs = map(int, input().split())
+    obstacles.add((rObs, cObs))
+ans = 0
+# left
+r, c = rQueen, cQueen - 1
+while c > 0:
+    if (r, c) in obstacles:
+        break
+    ans, c = ans + 1, c - 1
+# right
+r, c = rQueen, cQueen + 1
+while c <= n:
+    if (r, c) in obstacles:
+        break
+    ans, c = ans + 1, c + 1
+# up
+r, c = rQueen + 1, cQueen
+while r <= n:
+    if (r, c) in obstacles:
+        break
+    ans, r = ans + 1, r + 1
+# down
+r, c = rQueen - 1, cQueen
+while r > 0:
+    if (r, c) in obstacles:
+        break
+    ans, r = ans + 1, r - 1
+# upper right
+r, c = rQueen + 1, cQueen + 1
+while r <= n and c <= n:
+    if (r, c) in obstacles:
+        break
+    ans, r, c = ans + 1, r + 1, c + 1
+# upper left
+r, c = rQueen + 1, cQueen - 1
+while r <= n and c > 0:
+    if (r, c) in obstacles:
+        break
+    ans, r, c = ans + 1, r + 1, c - 1
+# lower left
+r, c = rQueen - 1, cQueen - 1
+while r > 0 and c > 0:
+    if (r, c) in obstacles:
+        break
+    ans, r, c = ans + 1, r - 1, c - 1
+# lower right
+r, c = rQueen - 1, cQueen + 1
+while r > 0 and c <= n:
+    if (r, c) in obstacles:
+        break
+    ans, r, c = ans + 1, r - 1, c + 1
+print(ans)
