@@ -368,3 +368,60 @@ if __name__ == '__main__':
         fptr.write(result + '\n')
 
     fptr.close()
+
+# -------------------------------------------------------------------------------------------------------------------
+# 7. Climbing the Leaderboard
+#!/bin/python3
+
+import math
+import os
+import random
+import re
+import sys
+
+#
+# Complete the 'climbingLeaderboard' function below.
+#
+# The function is expected to return an INTEGER_ARRAY.
+# The function accepts following parameters:
+#  1. INTEGER_ARRAY ranked
+#  2. INTEGER_ARRAY player
+#
+
+def climbingLeaderboard(ranked, player):
+    ranked_ladder = [0] * len(ranked)
+    ranked_ladder[0] = 1
+    for i in range(1, len(ranked)):
+        if ranked[i] == ranked[i-1]:
+            ranked_ladder[i] = ranked_ladder[i-1]
+        else:
+            ranked_ladder[i] = ranked_ladder[i-1] + 1        
+    player_ladder = []
+    current_rank = len(ranked) - 1
+    for i in range(len(player)):    
+        while current_rank > 0 and player[i] >= ranked[current_rank - 1]:
+            current_rank -= 1
+        if current_rank == len(ranked) - 1:
+            if player[i] < ranked[current_rank]:
+                player_ladder.append(ranked_ladder[current_rank] + 1)
+                continue
+        player_ladder.append(ranked_ladder[current_rank])
+    return player_ladder
+
+if __name__ == '__main__':
+    fptr = open(os.environ['OUTPUT_PATH'], 'w')
+
+    ranked_count = int(input().strip())
+
+    ranked = list(map(int, input().rstrip().split()))
+
+    player_count = int(input().strip())
+
+    player = list(map(int, input().rstrip().split()))
+
+    result = climbingLeaderboard(ranked, player)
+
+    fptr.write('\n'.join(map(str, result)))
+    fptr.write('\n')
+
+    fptr.close()
