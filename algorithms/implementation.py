@@ -243,3 +243,128 @@ while r > 0 and c <= n:
         break
     ans, r, c = ans + 1, r - 1, c + 1
 print(ans)
+
+# -------------------------------------------------------------------------------------------------------------------
+# 6. Hash Table 
+#!/bin/python3
+
+import math
+import os
+import random
+import re
+import sys
+
+#
+# Complete the 'gridSearch' function below.
+#
+# The function is expected to return a STRING.
+# The function accepts following parameters:
+#  1. STRING_ARRAY G
+#  2. STRING_ARRAY P
+#
+
+class HashTable:
+    def __init__(self, size):
+        self.size = size
+        self.hash_table = self.create_buckets()
+ 
+    def create_buckets(self):
+        return {}
+ 
+    def set_val(self, key, val):
+        hashed_key = hash(key) % self.size
+        bucket = self.hash_table.get(hashed_key)
+        if bucket:
+            found_key = False
+            for index, record in enumerate(bucket):
+                record_key, record_val = record
+                if record_key == key:
+                    found_key = True
+                    break
+            if found_key:
+                bucket[index] = (key, val)
+            else:
+                bucket.append((key, val))
+        else:
+            self.hash_table[hashed_key] = []
+            self.hash_table[hashed_key].append((key, val))
+ 
+    def get_val(self, key):
+        hashed_key = hash(key) % self.size
+        bucket = self.hash_table.get(hashed_key)
+        if bucket:
+            found_key = False
+            for index, record in enumerate(bucket):
+                record_key, record_val = record
+                if record_key == key:
+                    found_key = True
+                    break
+            if found_key:
+                return record_val
+            else:
+                return None
+        else:
+            return None
+ 
+    def delete_val(self, key):
+        hashed_key = hash(key) % self.size
+        bucket = self.hash_table.get(hashed_key)
+        if bucket:
+            found_key = False
+            for index, record in enumerate(bucket):
+                record_key, record_val = record
+                if record_key == key:
+                    found_key = True
+                    break
+            if found_key:
+                bucket.pop(index)
+    def __str__(self):
+        return "\n".join(str(item) + " " + str(self.hash_table[item]) for item in self.hash_table)
+
+def gridSearch(R, C, G, r, c, P):
+    # Write your code here
+    gridHashTable = HashTable(pow(10, 9) + 7)
+    for i in range(R):
+        for j in range(C - c + 1):
+            tempStr = G[i][j:j+c]
+            gridHashTable.set_val(tempStr, True)
+    for i in range(r):
+        if not gridHashTable.get_val(P[i]):
+            return "NO"
+    return "YES"
+
+if __name__ == '__main__':
+    fptr = open(os.environ['OUTPUT_PATH'], 'w')
+
+    t = int(input().strip())
+
+    for t_itr in range(t):
+        first_multiple_input = input().rstrip().split()
+
+        R = int(first_multiple_input[0])
+
+        C = int(first_multiple_input[1])
+
+        G = []
+
+        for _ in range(R):
+            G_item = input()
+            G.append(G_item)
+
+        second_multiple_input = input().rstrip().split()
+
+        r = int(second_multiple_input[0])
+
+        c = int(second_multiple_input[1])
+
+        P = []
+
+        for _ in range(r):
+            P_item = input()
+            P.append(P_item)
+
+        result = gridSearch(R, C, G, r, c, P)
+
+        fptr.write(result + '\n')
+
+    fptr.close()
