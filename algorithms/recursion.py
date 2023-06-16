@@ -53,6 +53,8 @@ import random
 import re
 import sys
 
+sys.setrecursionlimit(1000 * 1000) # Default 1000
+
 #
 # Complete the 'passwordCracker' function below.
 #
@@ -62,20 +64,24 @@ import sys
 #  2. STRING loginAttempt
 #
 
-def passwordCracker(passwords, loginAttempt):
+def passwordCracker(passwords, loginAttempt, failArr, loginAttempCurrentLength):
     # Write your code here
-    result = []    
+    if failArr[loginAttempCurrentLength]:
+        return []
+    result = []
     for passwd in passwords:
-        if passwd == loginAttempt[:len(passwd)]:
-            if len(passwd) == len(loginAttempt):                
+        if passwd == loginAttempt[:len(passwd)] and len(passwd) == len(loginAttempt[:len(passwd)]):
+            if len(passwd) == len(loginAttempt):
                 result.append(passwd)
                 break
             else:
-                passwdArr = passwordCracker(passwords, loginAttempt[len(passwd):])
+                passwdArr = passwordCracker(passwords, loginAttempt[len(passwd):], failArr, loginAttempCurrentLength + len(passwd))
                 if passwdArr:
                     passwdArr.append(passwd)
                     result = passwdArr
                     break
+    if not result:
+        failArr[loginAttempCurrentLength] = True
     return result
 
 if __name__ == '__main__':
@@ -89,8 +95,10 @@ if __name__ == '__main__':
         passwords = input().rstrip().split()
 
         loginAttempt = input()
+        
+        failArr = [False for _ in range(len(loginAttempt) + 1)]
 
-        result = passwordCracker(passwords, loginAttempt)
+        result = passwordCracker(passwords, loginAttempt, failArr, 0)
         
         if result:
             result.reverse()
@@ -99,5 +107,7 @@ if __name__ == '__main__':
             result = "WRONG PASSWORD"
 
         fptr.write(result + '\n')
+
+    fptr.close()
 
     fptr.close()
