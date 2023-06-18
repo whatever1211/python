@@ -1,3 +1,4 @@
+# Dijkstra
 ###
 Input Format
 The first line contains t, the number of test cases.
@@ -105,3 +106,361 @@ if __name__ == '__main__':
         fptr.write('\n')
 
     fptr.close()
+
+# -------------------------------------------------------------------------------------------------------------------
+# DFS
+# Python3 program to print DFS traversal
+# from a given graph
+from collections import defaultdict
+
+
+# This class represents a directed graph using
+# adjacency list representation
+class Graph:
+
+	# Constructor
+	def __init__(self):
+
+		# Default dictionary to store graph
+		self.graph = defaultdict(list)
+
+	
+	# Function to add an edge to graph
+	def addEdge(self, u, v):
+		self.graph[u].append(v)
+
+	
+	# A function used by DFS
+	def DFSUtil(self, v, visited):
+
+		# Mark the current node as visited
+		# and print it
+		visited.add(v)
+		print(v, end=' ')
+
+		# Recur for all the vertices
+		# adjacent to this vertex
+		for neighbour in self.graph[v]:
+			if neighbour not in visited:
+				self.DFSUtil(neighbour, visited)
+
+	
+	# The function to do DFS traversal. It uses
+	# recursive DFSUtil()
+	def DFS(self, v):
+
+		# Create a set to store visited vertices
+		visited = set()
+
+		# Call the recursive helper function
+		# to print DFS traversal
+		self.DFSUtil(v, visited)
+
+
+# Driver's code
+if __name__ == "__main__":
+	g = Graph()
+	g.addEdge(0, 1)
+	g.addEdge(0, 2)
+	g.addEdge(1, 2)
+	g.addEdge(2, 0)
+	g.addEdge(2, 3)
+	g.addEdge(3, 3)
+
+	print("Following is Depth First Traversal (starting from vertex 2)")
+	
+	# Function call
+	g.DFS(2)
+
+# This code is contributed by Neelam Yadav
+
+# -------------------------------------------------------------------------------------------------------------------
+# BFS
+# Python3 Program to print BFS traversal
+# from a given source vertex. BFS(int s)
+# traverses vertices reachable from s.
+
+from collections import defaultdict
+
+
+# This class represents a directed graph
+# using adjacency list representation
+class Graph:
+
+	# Constructor
+	def __init__(self):
+
+		# Default dictionary to store graph
+		self.graph = defaultdict(list)
+
+	# Function to add an edge to graph
+	def addEdge(self, u, v):
+		self.graph[u].append(v)
+
+	# Function to print a BFS of graph
+	def BFS(self, s):
+
+		# Mark all the vertices as not visited
+		visited = [False] * (max(self.graph) + 1)
+
+		# Create a queue for BFS
+		queue = []
+
+		# Mark the source node as
+		# visited and enqueue it
+		queue.append(s)
+		visited[s] = True
+
+		while queue:
+
+			# Dequeue a vertex from
+			# queue and print it
+			s = queue.pop(0)
+			print(s, end=" ")
+
+			# Get all adjacent vertices of the
+			# dequeued vertex s.
+			# If an adjacent has not been visited,
+			# then mark it visited and enqueue it
+			for i in self.graph[s]:
+				if visited[i] == False:
+					queue.append(i)
+					visited[i] = True
+
+
+# Driver code
+if __name__ == '__main__':
+
+	# Create a graph given in
+	# the above diagram
+	g = Graph()
+	g.addEdge(0, 1)
+	g.addEdge(0, 2)
+	g.addEdge(1, 2)
+	g.addEdge(2, 0)
+	g.addEdge(2, 3)
+	g.addEdge(3, 3)
+
+	print("Following is Breadth First Traversal"
+		" (starting from vertex 2)")
+	g.BFS(2)
+
+# This code is contributed by Neelam Yadav
+
+# -------------------------------------------------------------------------------------------------------------------
+# Cycle detect undirected graph
+# Python Program to detect cycle in an undirected graph
+from collections import defaultdict
+
+# This class represents a undirected
+# graph using adjacency list representation
+
+
+class Graph:
+
+	def __init__(self, vertices):
+
+		# No. of vertices
+		self.V = vertices # No. of vertices
+
+		# Default dictionary to store graph
+		self.graph = defaultdict(list)
+
+	# Function to add an edge to graph
+	def addEdge(self, v, w):
+
+		# Add w to v_s list
+		self.graph[v].append(w)
+
+		# Add v to w_s list
+		self.graph[w].append(v)
+
+	# A recursive function that uses
+	# visited[] and parent to detect
+	# cycle in subgraph reachable from vertex v.
+	def isCyclicUtil(self, v, visited, parent):
+
+		# Mark the current node as visited
+		visited[v] = True
+
+		# Recur for all the vertices
+		# adjacent to this vertex
+		for i in self.graph[v]:
+
+			# If the node is not
+			# visited then recurse on it
+			if visited[i] == False:
+				if(self.isCyclicUtil(i, visited, v)):
+					return True
+			# If an adjacent vertex is
+			# visited and not parent
+			# of current vertex,
+			# then there is a cycle
+			elif parent != i:
+				return True
+
+		return False
+
+	# Returns true if the graph
+	# contains a cycle, else false.
+
+	def isCyclic(self):
+
+		# Mark all the vertices
+		# as not visited
+		visited = [False]*(self.V)
+
+		# Call the recursive helper
+		# function to detect cycle in different
+		# DFS trees
+		for i in range(self.V):
+
+			# Don't recur for u if it
+			# is already visited
+			if visited[i] == False:
+				if(self.isCyclicUtil
+				(i, visited, -1)) == True:
+					return True
+
+		return False
+
+
+# Create a graph given in the above diagram
+g = Graph(5)
+g.addEdge(1, 0)
+g.addEdge(1, 2)
+g.addEdge(2, 0)
+g.addEdge(0, 3)
+g.addEdge(3, 4)
+
+if g.isCyclic():
+	print("Graph contains cycle")
+else:
+	print("Graph doesn't contain cycle ")
+g1 = Graph(3)
+g1.addEdge(0, 1)
+g1.addEdge(1, 2)
+
+
+if g1.isCyclic():
+	print("Graph contains cycle")
+else:
+	print("Graph doesn't contain cycle ")
+
+# This code is contributed by Neelam Yadav
+
+# -------------------------------------------------------------------------------------------------------------------
+# Kruskal Minimum Spanning Tree
+# Python program for Kruskal's algorithm to find
+# Minimum Spanning Tree of a given connected,
+# undirected and weighted graph
+
+
+# Class to represent a graph
+class Graph:
+
+	def __init__(self, vertices):
+		self.V = vertices
+		self.graph = []
+
+	# Function to add an edge to graph
+	def addEdge(self, u, v, w):
+		self.graph.append([u, v, w])
+
+	# A utility function to find set of an element i
+	# (truly uses path compression technique)
+	def find(self, parent, i):
+		if parent[i] != i:
+
+			# Reassignment of node's parent
+			# to root node as
+			# path compression requires
+			parent[i] = self.find(parent, parent[i])
+		return parent[i]
+
+	# A function that does union of two sets of x and y
+	# (uses union by rank)
+	def union(self, parent, rank, x, y):
+
+		# Attach smaller rank tree under root of
+		# high rank tree (Union by Rank)
+		if rank[x] < rank[y]:
+			parent[x] = y
+		elif rank[x] > rank[y]:
+			parent[y] = x
+
+		# If ranks are same, then make one as root
+		# and increment its rank by one
+		else:
+			parent[y] = x
+			rank[x] += 1
+
+	# The main function to construct MST
+	# using Kruskal's algorithm
+	def KruskalMST(self):
+
+		# This will store the resultant MST
+		result = []
+
+		# An index variable, used for sorted edges
+		i = 0
+
+		# An index variable, used for result[]
+		e = 0
+
+		# Sort all the edges in
+		# non-decreasing order of their
+		# weight
+		self.graph = sorted(self.graph,
+							key=lambda item: item[2])
+
+		parent = []
+		rank = []
+
+		# Create V subsets with single elements
+		for node in range(self.V):
+			parent.append(node)
+			rank.append(0)
+
+		# Number of edges to be taken is less than to V-1
+		while e < self.V - 1:
+
+			# Pick the smallest edge and increment
+			# the index for next iteration
+			u, v, w = self.graph[i]
+			i = i + 1
+			x = self.find(parent, u)
+			y = self.find(parent, v)
+
+			# If including this edge doesn't
+			# cause cycle, then include it in result
+			# and increment the index of result
+			# for next edge
+			if x != y:
+				e = e + 1
+				result.append([u, v, w])
+				self.union(parent, rank, x, y)
+			# Else discard the edge
+
+		minimumCost = 0
+		print("Edges in the constructed MST")
+		for u, v, weight in result:
+			minimumCost += weight
+			print("%d -- %d == %d" % (u, v, weight))
+		print("Minimum Spanning Tree", minimumCost)
+
+
+# Driver code
+if __name__ == '__main__':
+	g = Graph(4)
+	g.addEdge(0, 1, 10)
+	g.addEdge(0, 2, 6)
+	g.addEdge(0, 3, 5)
+	g.addEdge(1, 3, 15)
+	g.addEdge(2, 3, 4)
+
+	# Function call
+	g.KruskalMST()
+
+# This code is contributed by Neelam Yadav
+# Improved by James Graça-Jones
