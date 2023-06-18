@@ -1,5 +1,5 @@
 # -------------------------------------------------------------------------------------------------------------------
-# Journey to the Moon
+# 1. Journey to the Moon
 #!/bin/python3
 
 import math
@@ -76,7 +76,7 @@ if __name__ == '__main__':
     fptr.close()
 
 # -------------------------------------------------------------------------------------------------------------------
-# Roads and Libraries
+# 2. Roads and Libraries
 #!/bin/python3
 
 import math
@@ -164,5 +164,146 @@ if __name__ == '__main__':
         result = roadsAndLibraries(n, c_lib, c_road, cities)
 
         fptr.write(str(result) + '\n')
+
+    fptr.close()
+
+# -------------------------------------------------------------------------------------------------------------------
+# 3. Kruskal (MST): Really Special Subtree
+#!/bin/python3
+
+import math
+import os
+import random
+import re
+import sys
+
+#
+# Complete the 'kruskals' function below.
+#
+# The function is expected to return an INTEGER.
+# The function accepts WEIGHTED_INTEGER_GRAPH g as parameter.
+#
+
+#
+# For the weighted graph, <name>:
+#
+# 1. The number of nodes is <name>_nodes.
+# 2. The number of edges is <name>_edges.
+# 3. An edge exists between <name>_from[i] and <name>_to[i]. The weight of the edge is <name>_weight[i].
+#
+#
+# Class to represent a graph
+class Graph:
+
+    def __init__(self, vertices):
+        self.V = vertices
+        self.graph = []
+
+    # Function to add an edge to graph
+    def addEdge(self, u, v, w):
+        self.graph.append([u, v, w])
+
+    # A utility function to find set of an element i
+    # (truly uses path compression technique)
+    def find(self, parent, i):
+        if parent[i] != i:
+
+            # Reassignment of node's parent
+            # to root node as
+            # path compression requires
+            parent[i] = self.find(parent, parent[i])
+        return parent[i]
+
+    # A function that does union of two sets of x and y
+    # (uses union by rank)
+    def union(self, parent, rank, x, y):
+
+        # Attach smaller rank tree under root of
+        # high rank tree (Union by Rank)
+        if rank[x] < rank[y]:
+            parent[x] = y
+        elif rank[x] > rank[y]:
+            parent[y] = x
+
+        # If ranks are same, then make one as root
+        # and increment its rank by one
+        else:
+            parent[y] = x
+            rank[x] += 1
+
+    # The main function to construct MST
+    # using Kruskal's algorithm
+    def KruskalMST(self):
+
+        # This will store the resultant MST
+        result = []
+
+        # An index variable, used for sorted edges
+        i = 0
+
+        # An index variable, used for result[]
+        e = 0
+
+        # Sort all the edges in
+        # non-decreasing order of their
+        # weight
+        self.graph = sorted(self.graph,
+                            key=lambda item: item[2])
+
+        parent = []
+        rank = []
+
+        # Create V subsets with single elements
+        for node in range(self.V):
+            parent.append(node)
+            rank.append(0)
+
+        # Number of edges to be taken is less than to V-1
+        while e < self.V - 1:
+
+            # Pick the smallest edge and increment
+            # the index for next iteration
+            u, v, w = self.graph[i]
+            i = i + 1
+            x = self.find(parent, u)
+            y = self.find(parent, v)
+
+            # If including this edge doesn't
+            # cause cycle, then include it in result
+            # and increment the index of result
+            # for next edge
+            if x != y:
+                e = e + 1
+                result.append([u, v, w])
+                self.union(parent, rank, x, y)
+            # Else discard the edge
+
+        minimumCost = 0
+        print("Edges in the constructed MST")
+        for u, v, weight in result:
+            minimumCost += weight
+            print("%d -- %d == %d" % (u, v, weight))
+        print("Minimum Spanning Tree", minimumCost)
+        
+        return minimumCost
+
+if __name__ == '__main__':
+    fptr = open(os.environ['OUTPUT_PATH'], 'w')
+
+    g_nodes, g_edges = map(int, input().rstrip().split())
+
+    g_from = [0] * g_edges
+    g_to = [0] * g_edges
+    g_weight = [0] * g_edges
+
+    g = Graph(g_nodes)
+    
+    for i in range(g_edges):
+        g_from[i], g_to[i], g_weight[i] = map(int, input().rstrip().split())
+        g.addEdge(g_from[i] - 1, g_to[i] - 1, g_weight[i])
+
+    g.KruskalMST()    
+
+    fptr.write(str(g.KruskalMST()))
 
     fptr.close()
