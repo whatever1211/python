@@ -101,3 +101,94 @@ if __name__ == "__main__":
         result = solve(n, arr)
         
         print(result)
+
+# -------------------------------------------------------------------------------------------------------------------
+# 3. Cloudy Day
+#!/bin/python3
+
+import math
+import os
+import random
+import re
+import sys
+
+#
+# Complete the 'maximumPeople' function below.
+#
+# The function is expected to return a LONG_INTEGER.
+# The function accepts following parameters:
+#  1. LONG_INTEGER_ARRAY p
+#  2. LONG_INTEGER_ARRAY x
+#  3. LONG_INTEGER_ARRAY y
+#  4. LONG_INTEGER_ARRAY r
+#
+
+def maximumPeople(p, x, y, r):
+    cities = [[i[0], i[1]] for i in zip(x, p)]  # cities or towns
+    cities = sorted(cities, key=lambda x: (x[0]))
+
+    clouds = [[max(1, i[0]-i[1]), i[0]+i[1]] for idx, i in enumerate(zip(y, r))]
+    clouds = sorted(clouds, key=lambda x: (x[0]))
+
+    len_cloud = len(clouds)
+    idx = 0
+    start = 0
+    sum_sunny = 0
+    cloud_city = [0 for _ in range(len_cloud)]
+    for j in cities:
+        count = []
+        check = True
+        idx = start
+
+        while idx < len_cloud:
+            i = clouds[idx]
+            if check and i[1] < j[0]:
+                start = idx+1
+                idx += 1
+                continue
+
+            if i[1] >= j[0]:
+                check = False
+
+            if i[0] <= j[0] and j[0] <= i[1]:
+                count.append(idx)
+
+            if len(count) > 1:
+                break
+
+            if i[0] > j[0]:
+                break
+
+            idx += 1
+
+        if len(count) == 0:
+            sum_sunny += j[1]
+        if len(count) == 1:
+            cloud_city[count[0]] += j[1]
+
+
+    sum_cloud = max(cloud_city)
+    # print(cities, selected_clouds)
+    # print(sum_sunny, sum_cloud)
+    return sum_sunny + sum_cloud
+
+if __name__ == '__main__':
+    fptr = open(os.environ['OUTPUT_PATH'], 'w')
+
+    n = int(input().strip())
+
+    p = list(map(int, input().rstrip().split()))
+
+    x = list(map(int, input().rstrip().split()))
+
+    m = int(input().strip())
+
+    y = list(map(int, input().rstrip().split()))
+
+    r = list(map(int, input().rstrip().split()))
+
+    result = maximumPeople(p, x, y, r)
+
+    fptr.write(str(result) + '\n')
+
+    fptr.close()
