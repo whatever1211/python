@@ -106,6 +106,8 @@ if __name__ == "__main__":
 # 3. Cloudy Day
 #!/bin/python3
 
+#!/bin/python3
+
 import math
 import os
 import random
@@ -124,53 +126,49 @@ import sys
 #
 
 def maximumPeople(p, x, y, r):
-    cities = [[i[0], i[1]] for i in zip(x, p)]  # cities or towns
-    cities = sorted(cities, key=lambda x: (x[0]))
-
-    clouds = [[max(1, i[0]-i[1]), i[0]+i[1]] for idx, i in enumerate(zip(y, r))]
-    clouds = sorted(clouds, key=lambda x: (x[0]))
-
-    len_cloud = len(clouds)
-    idx = 0
-    start = 0
-    sum_sunny = 0
-    cloud_city = [0 for _ in range(len_cloud)]
-    for j in cities:
-        count = []
-        check = True
-        idx = start
-
-        while idx < len_cloud:
-            i = clouds[idx]
-            if check and i[1] < j[0]:
-                start = idx+1
-                idx += 1
-                continue
-
-            if i[1] >= j[0]:
-                check = False
-
-            if i[0] <= j[0] and j[0] <= i[1]:
-                count.append(idx)
-
-            if len(count) > 1:
-                break
-
-            if i[0] > j[0]:
-                break
-
-            idx += 1
-
-        if len(count) == 0:
-            sum_sunny += j[1]
-        if len(count) == 1:
-            cloud_city[count[0]] += j[1]
-
-
-    sum_cloud = max(cloud_city)
-    # print(cities, selected_clouds)
-    # print(sum_sunny, sum_cloud)
-    return sum_sunny + sum_cloud
+    cities = []
+    for i in range(len(p)):
+        cities.append([x[i], p[i]])
+    
+    cloud_start = []
+    cloud_end = []
+    clouds = set()
+    
+    for i in range(len(y)):
+        cloud_start.append([y[i] - r[i], i])
+        cloud_end.append([y[i] + r[i], i])
+    
+    cities = sorted(cities)
+    cloud_start = sorted(cloud_start)
+    cloud_end = sorted(cloud_end)
+    
+    cloudy = {}
+    sunny = 0
+    
+    cloud_start_i = 0
+    cloud_end_i = 0
+    
+    for city_i in range(len(cities)):
+        city_x = cities[city_i][0]
+        
+        while cloud_start_i < len(cloud_start) and cloud_start[cloud_start_i][0] <= city_x:
+            clouds.add(cloud_start[cloud_start_i][1])
+            cloud_start_i += 1
+        
+        while cloud_end_i < len(cloud_end) and cloud_end[cloud_end_i][0] < city_x:
+            clouds.remove(cloud_end[cloud_end_i][1])
+            cloud_end_i += 1
+            
+        if len(clouds) == 1:
+            cloud_start_x = list(clouds)[0]
+            if cloud_start_x in cloudy:
+                cloudy[cloud_start_x] += cities[city_i][1]
+            else:
+                cloudy[cloud_start_x] = cities[city_i][1]
+        elif len(clouds) == 0:
+            sunny += cities[city_i][1]
+    
+    return max(cloudy.values(), default=0) + sunny
 
 if __name__ == '__main__':
     fptr = open(os.environ['OUTPUT_PATH'], 'w')
