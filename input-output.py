@@ -103,3 +103,7 @@ for i in range(0, n):
     grid.append(input())
 
 print(nextMove(n,r,c,grid))
+
+#!/bin/python3
+# Sort by first value then second value
+sorted_array = sorted(unsorted, key=lambda element: (element[1], element[2]))
