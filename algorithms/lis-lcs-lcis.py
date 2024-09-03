@@ -1,4 +1,4 @@
-# LIS
+# LIS - Longest Increasing Subsequence
 def LIS(arr):
     n = len(arr)
     dp = [1] * n
@@ -10,7 +10,7 @@ def LIS(arr):
 arr = [10, 22, 9, 33, 21, 50, 41, 60]
 print(LIS(arr))
 
-# LCIS
+# LCIS - Longest Common Increasing Subsequence
 def LCIS(arr1, arr2):
     l1 = len(arr1)
     l2 = len(arr2)
@@ -28,7 +28,7 @@ a1 = [2, 4, 9, 1]
 a2 = [2, 5, 8, 4, 9, 0, 1]
 print("Length of LCIS is: ", LCIS(a1, a2))
 
-# LCS
+# LCS - Longest Common Subsequence
 def lcs_algo(S1, S2, m, n):
     L = [[0 for x in range(n+1)] for x in range(m+1)]
 
