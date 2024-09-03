@@ -905,66 +905,72 @@ else:
 # This code is contributed by maheshwaripiyush9
 
 # -------------------------------------------------------------------------------------------------------------------
-class Graph(): 
-    def __init__(self, vertices): 
-        self.adjacency_matrix = [[0 for column in range(vertices)]
-                                    for row in range(vertices)] 
-        self.vertices_count = vertices 
+# Get all hamiltonian paths in a graph from a given start vertex
+# Python implementation
 
-    def is_safe_to_add(self, v, pos, path): 
-        if self.adjacency_matrix[path[pos-1]][v] == 0: 
-            return False
+from typing import Dict, Set, List
+from collections import defaultdict
 
-        for vertex in path: 
-            if vertex == v: 
-                return False
 
-        return True
+class Graph:
+    def __init__(self, edges):
+        self.edges = edges
+        self.graph: Dict[int, Set] = defaultdict(set)
+        self.visited = defaultdict(lambda: False)
 
-    def hamiltonian_cycle_util(self, path, pos): 
-        if pos == self.vertices_count: 
-            if self.adjacency_matrix[path[pos-1]][path[0]] == 1: 
-                return True
-            else: 
-                return False
+        self.make_graph(edges)
 
-        for v in range(1, self.vertices_count): 
-            if self.is_safe_to_add(v, pos, path): 
-                path[pos] = v 
+        self.visited_nodes = 0
+        self.total_nodes = len(self.graph.keys())
 
-                if self.hamiltonian_cycle_util(path, pos+1): 
-                    return True
+    def make_graph(self, _edges) -> None:
+        self.edges.extend(_edges)
 
-                path[pos] = -1
+        for u, v in self.edges:
+            self.graph[u].add(v)
+            self.graph[v].add(u)
 
-        return False
+    def visit(self, node):
+        self.visited[node] = True
+        self.visited_nodes += 1
 
-    def find_hamiltonian_cycle(self): 
-        path = [-1] * self.vertices_count 
+    def un_visit(self, node):
+        self.visited[node] = False
+        self.visited_nodes -= 1
 
-        path[0] = 0
+    def all_nodes_are_visited(self) -> bool:
+        return self.visited_nodes == self.total_nodes
 
-        if not self.hamiltonian_cycle_util(path, 1): 
-            print ("No\n")
-            return False
+    def get_hamiltonian_path(self, start) -> List[List[int]]:
+        self.visit(start)
 
-        self.print_solution(path) 
-        return True
+        all_paths = []
 
-    def print_solution(self, path): 
-        print ("Yes\n")
-        for vertex in path: 
-            print (vertex )
+        if self.all_nodes_are_visited():
+            all_paths.append([start])
 
-# Example Graphs
-g1 = Graph(5) 
-g1.adjacency_matrix = [[0, 1, 0, 1, 0], 
-                        [1, 0, 1, 1, 1], 
-                        [0, 1, 0, 0, 1],
-                        [1, 1, 0, 0, 1], 
-                        [0, 1, 1, 1, 0]]
+        for node in self.graph[start]:
+            if self.visited[node]:
+                continue
+            paths = self.get_hamiltonian_path(node)
+            for path in paths:
+                if path:
+                    path.append(start)
+                    all_paths.append(path)
 
-g1.find_hamiltonian_cycle()
+        self.un_visit(start)
+        return all_paths
+
+
+if __name__ == '__main__':
+    edges = [
+        (1, 2), (2, 3), (3, 4), (4, 1), (2, 4), (1, 3)
+    ]
+    graph = Graph(edges)
+    hamiltonian_path = graph.get_hamiltonian_path(start=1)
+
+    for path in hamiltonian_path:
+        print("->".join(map(str, reversed(path))))
 
 # -------------------------------------------------------------------------------------------------------------------
 # Python program to find 
